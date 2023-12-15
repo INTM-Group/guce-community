@@ -1,0 +1,77 @@
+@import "~vuetify/src/styles/settings/_colors.scss";
+:root {
+    #app {
+        &.theme--dark {
+            --graph-ligne: rgba(255, 255, 255, 0.5);
+        }
+        --graph-color: rgb(255, 255, 255);
+        --ticket-status-0-color: rgba(128, 128, 128, 0.5);
+        --ticket-status-1-color: map-get($green, "accent-1");
+        --ticket-status-2-color: map-get($green, "accent-1");
+        --ticket-status-4-color: map-get($orange, "darken-1");
+        --ticket-status-8-color: map-get($blue, "darken-1");
+        --ticket-status-16-color: map-get($blue, "darken-1");
+        --ticket-status-32-color: map-get($blue, "darken-1");
+        --ticket-status-64-color: map-get($grey, "lighten-4");
+        --ticket-status-128-color: map-get($grey, "lighten-1");
+        --ticket-type-250-color: rgb(0, 176, 80);
+        --ticket-type-190-color: rgb(1, 55, 161);
+        --ticket-type-130-color: rgb(255, 214, 0);
+        --ticket-type-70-color: rgb(112, 48, 160);
+        --ticket-type-10-color: rgb(192, 0, 0);
+        --ticket-type-0-color: rgb(0, 112, 192);
+        --ticket-type-250-color-solid: rgba(0, 176, 80, 0.75);
+        --ticket-type-190-color-solid: rgba(1, 55, 161, 0.75);
+        --ticket-type-130-color-solid: rgba(255, 214, 0, 0.75);
+        --ticket-type-70-color-solid: rgba(112, 48, 160, 0.75);
+        --ticket-type-10-color-solid: rgba(192, 0, 0, 0.75);
+        --ticket-type-0-color-solid: rgba(0, 112, 192, 0.75);
+        --ticket-type-250-color-trasparent: rgba(0, 176, 80, 0.5);
+        --ticket-type-190-color-trasparent: rgba(1, 55, 161, 0.5);
+        --ticket-type-130-color-trasparent: rgba(255, 214, 0, 0.5);
+        --ticket-type-70-color-trasparent: rgba(112, 48, 160, 0.5);
+        --ticket-type-10-color-trasparent: rgba(192, 0, 0, 0.5);
+        --ticket-type-0-color-trasparent: rgba(0, 112, 192, 0.5);
+        .user-type.user-type2 {
+          background-color: rgba(1, 55, 161, 0.1);
+        }
+        .user-type:not(.user-type2):not(.user-typeundefined) {
+          background-color: rgba(255, 152, 0, 0.1);
+        }
+    }
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a8bbbf;
+}
+
+.tiptap-vuetify-editor__content {
+    overflow-y: auto;
+    min-height: 10vh;
+    max-height: 30vh;
+}
+
+.v-application--is-ltr .v-data-table--fixed-header .v-data-footer {
+    margin-right: 0px !important;
+}
+
+input[type=number] {
+  text-align: right;
+  padding-right: 0.1em !important;
+}

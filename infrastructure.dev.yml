@@ -1,0 +1,126 @@
+version: "3"
+
+networks:
+  virtual-net:
+
+services:
+  db:
+    build:
+      context: ./docker
+      dockerfile: images/database.dockerfile
+    image: $COMPOSE_PROJECT_NAME:mariadb
+    container_name: $COMPOSE_PROJECT_NAME-db
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - db-data:/var/lib/mysql
+      - $STORAGE_DIRECTORY/database/mariadb/init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: $COMPOSE_PROJECT_NAME
+      MYSQL_USER: $COMPOSE_PROJECT_NAME
+      MYSQL_PASSWORD: $COMPOSE_PROJECT_NAME
+      MYSQL_ROOT_PASSWORD: toor
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - virtual-net
+
+  mailhog:
+    build:
+      context: ./docker
+      dockerfile: images/mailhog.dockerfile
+    image: $COMPOSE_PROJECT_NAME:mailhog
+    container_name: $COMPOSE_PROJECT_NAME-mailhog
+    restart: "no"
+    volumes:
+      - $STORAGE_DIRECTORY/mailhog:/maildir
+    command: ["-storage=maildir", "-maildir-path=/maildir"]
+    ports:
+      - 8025:8025
+      - 1025:1025
+    networks:
+      - virtual-net
+
+  # redis:
+  #   build:
+  #     context: ./docker
+  #     dockerfile: images/redis.dockerfile
+  #   image: $COMPOSE_PROJECT_NAME:redis
+  #   container_name: $COMPOSE_PROJECT_NAME-redis
+  #   restart: "no"
+  #   command: redis-server --appendonly yes --requirepass "toor"
+  #   ports:
+  #     - "9987:9987"
+  #   networks:
+  #     - virtual-net
+
+  php: &php8
+    build:
+      context: ./docker
+      dockerfile: images/php.dockerfile
+    image: $COMPOSE_PROJECT_NAME:php
+    container_name: $COMPOSE_PROJECT_NAME-php
+    restart: "no"
+    environment:
+      COMPOSER_MEMORY_LIMIT: -1
+    volumes:
+      - $APP_CODE:/var/www/html
+      - $PHP_STATUS/status.conf:/usr/local/etc/php-fpm.d/www.conf
+    working_dir: /var/www/html
+    depends_on:
+      # - redis
+      - mailhog
+      - db
+    ports:
+       - "9080:9000"
+    networks:
+      - virtual-net
+
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: images/nginx.dockerfile
+    image: $COMPOSE_PROJECT_NAME:nginx
+    container_name: $COMPOSE_PROJECT_NAME-nginx
+    restart: "no"
+    ports:
+      - "8000:80"
+      - "8443:443"
+    volumes:
+      - $APP_CODE:/var/www/html
+      - $NGINX_CONFIG/nginx.conf:/etc/nginx/nginx.conf
+      - $NGINX_CONFIG/modules:/etc/nginx/modules
+      - $NGINX_CONFIG/conf.d:/etc/nginx/conf.d
+      - $NGINX_CONFIG/default.d:/etc/nginx/default.d
+      - $NGINX_CONFIG/servers.d:/etc/nginx/servers.d
+      - $NGINX_CONFIG/locations.d:/etc/nginx/locations.d
+      - $NGINX_CONFIG/auth:/etc/nginx/auth
+      - $NGINX_CONFIG/snippets.d:/etc/nginx/snippets.d
+      - $NGINX_LOGS:/var/log/nginx
+    working_dir: /var/www/html
+    depends_on:
+      - php
+      - db
+    networks:
+      - virtual-net
+
+  npm: &npm
+    build:
+      context: ./docker
+      dockerfile: images/npm.dockerfile
+    image: $COMPOSE_PROJECT_NAME:node
+    container_name: $COMPOSE_PROJECT_NAME-npm
+    volumes:
+      - $APP_CODE:/var/www/html
+    working_dir: /var/www/html
+    restart: "no"
+    entrypoint: ["npm"]
+    networks:
+      - virtual-net
+
+volumes:
+  db-data:
+    external: true
+    name: db-data

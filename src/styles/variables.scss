@@ -1,0 +1,8 @@
+@import "~vuetify/src/styles/settings/_colors.scss";
+$material-light: (
+  "background": map-get($grey, "lighten-4"),
+  "text-color": map-get($grey, "base"),
+);
+$material-dark: (
+  "text-color": map-get($grey, "lighten-4")
+);
